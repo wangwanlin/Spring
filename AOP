@@ -1,0 +1,2 @@
+ Spring AOP 中的三个概念，Advice：向程序内部注入的代码。Pointcut：注入 Advice 的位置，切入点，一般为某方法。
+ Advisor： Advice 和 Pointcut 的结合单元，以便将 Advice 和 Pointcut 分开实现灵活配置
