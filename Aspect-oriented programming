@@ -1,0 +1,42 @@
+简单地说，就是一个拦截器（ interceptor ）拦截一些处理过程。
+在 Spring AOP 中，支持 4 种类型的通知（ Advice ）：
+
+Before advice - method 执行前通知
+After returning advice - method 返回一个结果后通知
+After throwing advice - method 抛出异常后通知
+Around advice - 环绕通知，结合了以上三种
+
+在配置文件中加入新的 bean 配置 HijackBeforeMethod ，然后创建一个新的代理（ proxy ），命名为 customerServiceProxy 。target 定义你想劫持哪个 bean； 
+interceptorNames 定义想用哪个 class ( advice )劫持 target 。 ApringAOPAdvice.xml 如下：
+<bean id="customerServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target" ref="customerService" />
+        <property name="interceptorNames">
+            <list>
+                <value>hijackBeforeMethodBean</value>
+            </list>
+        </property>
+</bean>
+用 Spring proxy 之前，必须添加 CGLIB2 类库
+
+CustomerService cust = (CustomerService) appContext.getBean("customerServiceProxy");  用代理类获取对象
+
+Around Advice
+创建一个实现了接口 MethodInterceptor 的 class ，你必须通过 methodInvocation.proceed() 来调用原来的方法，即通过调用 methodInvocation.proceed() 来
+调用 CustomerService 中的每一个方法。
+
+Pointcut and Advisor ，即切入点和通知  一个 Pointcut 必须结合一个 Advisor 来使用。
+
+Advices ：表示一个 method 执行前或执行后的动作。
+Pointcut ：表示根据 method 的名字或者正则表达式去拦截一个 method 。
+Advisor ： Advice 和 Pointcut 组成的独立的单元，并且能够传给 proxy factory 对象。
+
+你可以配置用正则表达式匹配需要拦截的 method ，如下配置：
+<bean id="customerAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="patterns">
+            <list>
+                <value>.*URL.*</value>
+            </list>
+        </property>
+        <property name="advice" ref="hijackAroundMethodBean" />
+    </bean>
+我们可以拦截名字中包含 URL 字符的 method 了，在实际工作中，你可以用它来管理 DAO 层，例如，你可以用 .*DAO.* 来拦截所有 DAO 层中的相关业务    
