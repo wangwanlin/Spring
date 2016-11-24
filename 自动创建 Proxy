@@ -1,0 +1,28 @@
+利用 BeanNameAutoProxyCreator 自动创建 proxy
+
+
+   <bean
+    class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="beanNames">
+            <list>
+                <value>*Service</value>
+            </list>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>customerAdvisor</value>
+            </list>
+        </property>
+    </bean>      符合 *Service的Bean 都会自动被代理， 拦截者的bean的名字是 customerAdvisor，是一个建议者。 由pointcut和advice的Bean组成。 
+                拦截者的Bean的名字也可直接是 advice， 不过就是全部拦截了， 没有过滤性了。   被代理的类都是通过 代理者去操作的
+
+利用 DefaultAdvisorAutoProxyCreator 创建 Proxy
+
+<bean id="customerAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+        <property name="mappedName" value="printName" />
+        <property name="advice" ref="hijackAroundMethodBeanAdvice" />
+    </bean>
+
+       <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+以上例子中，xml 中任何 bean ，只要有 method 名字为 printName ，使用以下代码时，都会自动创建 Proxy ，来支持 AOP 。
+  其实 代理类是必须的。 advisor是非必须的，他只是提供一个劫持策略。由切入点和advice构成。如果没有advisor，只有代理类，则只配置被代理的目标和代理方法
