@@ -1,0 +1,4 @@
+对于 PointcutsDefinition 来说，主要职责是定义 Pointcut ，可以在其中第一多个切入点，并且可以用便于记忆的方法签名进行定义。
+单独定义 Pointcut 的好处是，一是通过使用有意义的方法名，而不是难读的 Pointcut 表达式，使代码更加直观；二是 Pointcut 可以实现共享，
+被多个 Advice 直接调用。
+若有多个 Advice 调用某个 Pointcut ，而这个 Pointcut 的表达式在将来有改变时，只需修改一个地方，维护更加方便。
